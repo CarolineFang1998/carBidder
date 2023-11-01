@@ -2,7 +2,7 @@
 
 -- USERS Table
 INSERT INTO USERS (user_id, user_type, user_name, email, balance, seller_rating, buyer_rating, num_of_seller_rating, num_of_buyer_rating, is_allowed_chat, is_allow_list) VALUES
-(1, 'ADMIN', 'AdminOne', 'admin1@email.com', 40000.00, 0.00, 0.00, 0, 0, TRUE, TRUE),
+(1, 'ADMIN', 'AdminOne', 'admin1@email.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (2, 'NORMAL_USER', 'MikeLee', 'mikelee@hotmail.com', 33000.00, 0.00, 0.00, 0, 0, TRUE, TRUE),
 (3, 'NORMAL_USER', 'LucyWhite', 'lucywhite@gmail.com', 59000.00, 0.00, 0.00, 0, 0, TRUE, TRUE),
 (4, 'NORMAL_USER', 'JohnSmith', 'johnsmith@yahoo.com', 19750.00, 0.00, 0.00, 0, 0, TRUE, TRUE),
