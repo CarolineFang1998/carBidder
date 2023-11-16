@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-import pymysql # noqa: 402
-pymysql.version_info = (1, 4, 6, 'final', 0) # change mysqlclient version
+import pymysql  # noqa: 402
+pymysql.version_info = (1, 4, 6, 'final', 0)  # change mysqlclient version
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -96,14 +96,14 @@ if os.getenv('GAE_APPLICATION', None):
             'HOST': '/cloudsql/db-group3:us-west1:cs5200-group3-carbidder',
             'USER': 'root',
             'PASSWORD': '',
-            'NAME': 'company',
+            'NAME': 'car_bidder',
         }
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'company',
+            'NAME': 'car_bidder',
             'USER': 'root',
             'PASSWORD': '',
             'HOST': '34.168.175.214',

@@ -9,17 +9,13 @@
 <body>
     <div class="container mt-4">
         <h1 class="text-center">Find Your Car</h1>
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <input type="text" class="form-control" placeholder="Search...">
-            </div>
-        </div>
 
         <!-- Filters Section -->
         <form action="" method="get">
+
+            <!-- Make Dropdown -->
             <div class="row mt-4">
-                <!-- Make Dropdown -->
-                <div class="col-md-3">
+                <div class="col-md-12">
                     <select class="form-control" name="make">
                         <option value="">Select Make</option>
                         {% for make in makes %}
@@ -27,9 +23,11 @@
                         {% endfor %}
                     </select>
                 </div>
+            </div>
 
-                <!-- Year Dropdowns -->
-                <div class="col-md-3">
+            <!-- Year Dropdowns -->
+            <div class="row mt-4">
+                <div class="col-md-6">
                     <select class="form-control" name="min_year">
                         <option value="">Min Year</option>
                         {% for year in years %}
@@ -37,7 +35,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <select class="form-control" name="max_year">
                         <option value="">Max Year</option>
                         {% for year in years %}
@@ -45,9 +43,11 @@
                         {% endfor %}
                     </select>
                 </div>
+            </div>
 
-                <!-- Mileage Dropdowns -->
-                <div class="col-md-3">
+            <!-- Mileage Dropdowns -->
+            <div class="row mt-4">
+                <div class="col-md-6">
                     <select class="form-control" name="min_mile">
                         <option value="">Min Mileage</option>
                         {% for mileage in mileages %}
@@ -55,7 +55,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <select class="form-control" name="max_mile">
                         <option value="">Max Mileage</option>
                         {% for mileage in mileages %}
@@ -63,9 +63,11 @@
                         {% endfor %}
                     </select>
                 </div>
+            </div>
 
-                <!-- Price Dropdowns -->
-                <div class="col-md-3">
+            <!-- Price Dropdowns -->
+            <div class="row mt-4">
+                <div class="col-md-6">
                     <select class="form-control" name="min_price">
                         <option value="">Min Price</option>
                         {% for price in prices %}
@@ -73,7 +75,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <select class="form-control" name="max_price">
                         <option value="">Max Price</option>
                         {% for price in prices %}
@@ -82,6 +84,8 @@
                     </select>
                 </div>
             </div>
+
+            <!-- Search Button -->
             <div class="row mt-4">
                 <div class="col-md-12 text-center">
                     <button type="submit" class="btn btn-primary">Search</button>
