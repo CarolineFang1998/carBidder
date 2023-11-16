@@ -9,3 +9,12 @@ def testmysql(request):
         'user_name': employee[0].lname,
     }
     return render(request, 'home.html', context)
+
+
+
+def search(request):
+
+    context ={
+        
+    }
+    return render(request, 'search.html', context)
