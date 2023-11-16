@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Car</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center">Find Your Car</h1>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <input type="text" class="form-control" placeholder="Search...">
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <form action="" method="get">
+            <div class="row mt-4">
+                <!-- Make Dropdown -->
+                <div class="col-md-3">
+                    <select class="form-control" name="make">
+                        <option value="">Select Make</option>
+                        {% for make in makes %}
+                        <option value="{{ make }}">{{ make }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Year Dropdowns -->
+                <div class="col-md-3">
+                    <select class="form-control" name="min_year">
+                        <option value="">Min Year</option>
+                        {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control" name="max_year">
+                        <option value="">Max Year</option>
+                        {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Mileage Dropdowns -->
+                <div class="col-md-3">
+                    <select class="form-control" name="min_mile">
+                        <option value="">Min Mileage</option>
+                        {% for mileage in mileages %}
+                        <option value="{{ mileage }}">{{ mileage }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control" name="max_mile">
+                        <option value="">Max Mileage</option>
+                        {% for mileage in mileages %}
+                        <option value="{{ mileage }}">{{ mileage }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Price Dropdowns -->
+                <div class="col-md-3">
+                    <select class="form-control" name="min_price">
+                        <option value="">Min Price</option>
+                        {% for price in prices %}
+                        <option value="{{ price }}">{{ price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control" name="max_price">
+                        <option value="">Max Price</option>
+                        {% for price in prices %}
+                        <option value="{{ price }}">{{ price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12 text-center">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Results Section -->
+        <!-- Here you will include the logic to display the filtered results -->
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
