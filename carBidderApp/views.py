@@ -81,6 +81,38 @@ def searchCar(request):
         query += " AND price <= %s"
         params.append(max_price)
 
+    # Fetch the search term
+    search_words = []
+    search_term = request.GET.get('search_term', '').strip()
+
+    # Check if search term is not empty
+    if search_term:
+        search_words = search_term.split()
+
+    # Initialize search_words as an empty list
+    search_words = []
+
+    # Fetch the search term
+    search_term = request.GET.get('search_term', '').strip()
+
+    # Check if search term is not empty
+    if search_term:
+        search_words = search_term.split()
+
+        # Build the search query only if there are search words
+        search_query = " AND ("
+        search_query_parts = []
+        for word in search_words:
+            search_query_parts.append(
+                "(make LIKE %s OR model LIKE %s OR exterior_color LIKE %s OR "
+                "vehicle_description LIKE %s OR fuel_type LIKE %s OR CAST(year_of_production AS CHAR) LIKE %s)")
+            params.extend(["%" + word + "%"] * 6)
+
+        # Only append if there are parts to the search query
+        if search_query_parts:
+            search_query += " OR ".join(search_query_parts) + ")"
+            query += search_query
+
     vehicles = []
     with connection.cursor() as cursor:
         cursor.execute(query, params)
