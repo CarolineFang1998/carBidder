@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {{ product.make }} {{ product.model }} - {{ product.year_of_production }}
+    </title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-4">
+      <div class="row">
+        <!-- First Column: Product Image -->
+        <div class="col-md-4">
+          <img
+            src="{{ product.image_url }}"
+            alt="{{ product.make }} {{ product.model }}"
+            style="width: 100%; height: auto"
+          />
+        </div>
+
+        <!-- Second Column: Product Details -->
+        <div class="col-md-5">
+          <!-- Vehicle Info Section -->
+          <div class="mb-3">
+            <h3>
+              {{ product.year_of_production }} - {{ product.make }} - {{
+              product.model }}
+            </h3>
+            <p><strong>Miles:</strong> {{ product.mileage }}</p>
+            <p><strong>Price:</strong> ${{ product.price }}</p>
+          </div>
+
+          <!-- Description Section -->
+          <div class="mb-3">
+            <h4>Description</h4>
+            <p>{{ product.vehicle_description }}</p>
+            <p><strong>Fuel Type:</strong> {{ product.fuel_type }}</p>
+            <p><strong>Exterior Color:</strong> {{ product.exterior_color }}</p>
+            <p><strong>Interior Color:</strong> {{ product.interior_color }}</p>
+            <p><strong>State:</strong> {{ product.state }}</p>
+            <p><strong>Zip Code:</strong> {{ product.zip_code }}</p>
+          </div>
+
+          <!-- Seller Section -->
+          <div class="mb-3">
+            <h4>Seller</h4>
+            <p>{{ product.seller_name }}</p>
+            <!-- Add seller rating if available -->
+          </div>
+        </div>
+
+        <!-- Third Column: Bidding Section -->
+        <div class="col-md-3">
+          <div class="mb-3">
+            <h4>Bidding Section</h4>
+            <p>Place your bids here!</p>
+            <!-- Bidding information -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

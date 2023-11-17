@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db import connection
+from django.http import Http404
 
 # Create your views here.
 
@@ -128,3 +129,40 @@ def searchCar(request):
         'prices': prices,
         'error_message': error_message
     })
+
+
+def product_detail(request, listing_id):
+    with connection.cursor() as cursor:
+        # SQL query to join USERS and LISTED_VEHICLES tables
+        cursor.execute("""
+            SELECT LV.*, U.user_name 
+            FROM LISTED_VEHICLES AS LV
+            JOIN USERS AS U ON LV.seller_id = U.user_id
+            WHERE LV.listing_id = %s
+        """, [listing_id])
+
+        result = cursor.fetchone()
+
+    # If no product is found, raise a 404 error
+    if not result:
+        raise Http404("Product does not exist")
+
+    # Map the result to a dictionary for easy access in the template
+    product_dict = {
+        'VIN': result[2],
+        'image_url': result[4],
+        'vehicle_description': result[5],
+        'make': result[6],
+        'model': result[7],
+        'fuel_type': result[8],
+        'year_of_production': result[9],
+        'mileage': result[10],
+        'price': result[11],
+        'exterior_color': result[12],
+        'interior_color': result[13],
+        'state': result[14],
+        'zip_code': result[15],
+        'seller_name': result[20],
+    }
+
+    return render(request, 'product_detail.html', {'product': product_dict})
