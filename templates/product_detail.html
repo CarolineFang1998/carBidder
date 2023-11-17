@@ -44,17 +44,33 @@
   <body>
     <div class="container mt-5">
       <div class="row">
-        <!-- First Column: Product Image -->
-        <div class="col-md-4 product-image">
-          <img
-            src="{{ product.image_url }}"
-            alt="{{ product.make }} {{ product.model }}"
-            class="img-fluid"
-          />
+        <!-- First Column: 50% Width -->
+        <div class="col-md-6">
+          <!-- Product Image (First Row) -->
+          <div class="row mb-3">
+            <div class="col product-image">
+              <img
+                src="{{ product.image_url }}"
+                alt="{{ product.make }} {{ product.model }}"
+                class="img-fluid"
+              />
+            </div>
+          </div>
+
+          <!-- Bidding Section (Second Row) -->
+          <div class="row">
+            <div class="col">
+              <div class="bidding-section">
+                <h4>Bidding Section</h4>
+                <p>Place your bids here!</p>
+                <!-- Bidding information -->
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Second Column: Product Details -->
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div class="product-details">
             <!-- Vehicle Info Section -->
             <div class="mb-4">
@@ -63,7 +79,7 @@
                 product.model }}
               </h3>
               <p><strong>Miles:</strong> {{ product.mileage }}</p>
-              <p><strong>Price:</strong> ${{ product.price }}</p>
+              <p><strong>Starting Price:</strong> ${{ product.price }}</p>
             </div>
 
             <!-- Description Section -->
@@ -88,15 +104,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Third Column: Bidding Section -->
-        <div class="col-md-3">
-          <div class="bidding-section">
-            <h4>Bidding Section</h4>
-            <p>Place your bids here!</p>
-            <!-- Bidding information -->
-          </div>
-        </div>
       </div>
     </div>
 
@@ -104,6 +111,7 @@
       <p>&copy; 2023 Find Your Car. All Rights Reserved.</p>
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
