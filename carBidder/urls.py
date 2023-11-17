@@ -20,6 +20,6 @@ from carBidderApp import views
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('', views.searchCar),
-    path('/search', views.searchCar),
+    path('search', views.searchCar),
     path('product/<int:listing_id>/', views.product_detail, name='product_detail'),
 ]
