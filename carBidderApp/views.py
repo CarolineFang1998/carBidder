@@ -81,10 +81,12 @@ def searchCar(request):
         query += " AND price <= %s"
         params.append(max_price)
 
-    # Execute the query
+    vehicles = []
     with connection.cursor() as cursor:
         cursor.execute(query, params)
-        vehicles = cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+        for row in cursor.fetchall():
+            vehicles.append(dict(zip(columns, row)))
 
     return render(request, 'searchCar.html', {
         'vehicles': vehicles,
