@@ -211,24 +211,30 @@
       {% if vehicles %} {% for vehicle in vehicles %}
       <!-- Vehicle Card -->
       <div class="col-md-4 mb-4">
-        <div class="card h-100">
-          <img
-            src="{{ vehicle.image_url }}"
-            class="card-img-top"
-            alt="Vehicle Image"
-            style="height: 200px; object-fit: cover"
-          />
-          <div class="card-body">
-            <h5 class="card-title">
-              {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}
-            </h5>
-            <p class="card-text">Price: ${{ vehicle.price }}</p>
+        <!-- Wrap the card in an <a> tag -->
+        <a
+          href="{% url 'product_detail' listing_id=vehicle.listing_id %}"
+          class="text-decoration-none text-dark"
+        >
+          <div class="card h-100">
+            <img
+              src="{{ vehicle.image_url }}"
+              class="card-img-top"
+              alt="Vehicle Image"
+              style="height: 200px; object-fit: cover"
+            />
+            <div class="card-body">
+              <h5 class="card-title">
+                {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}
+              </h5>
+              <p class="card-text">Price: ${{ vehicle.price }}</p>
+            </div>
           </div>
-        </div>
+        </a>
       </div>
       {% if forloop.counter|divisibleby:3 %}
     </div>
-    <div class="row mt-4">
+    <div class="row mt-4" style="padding-left: 40px; padding-right: 40px">
       {% endif %} {% endfor %} {% else %}
       <p class="col-md-12">No vehicles found.</p>
       {% endif %}

@@ -135,7 +135,7 @@ def product_detail(request, listing_id):
     with connection.cursor() as cursor:
         # SQL query to join USERS and LISTED_VEHICLES tables
         cursor.execute("""
-            SELECT LV.*, U.user_name 
+            SELECT LV.*, U.* 
             FROM LISTED_VEHICLES AS LV
             JOIN USERS AS U ON LV.seller_id = U.user_id
             WHERE LV.listing_id = %s
@@ -162,7 +162,8 @@ def product_detail(request, listing_id):
         'interior_color': result[13],
         'state': result[14],
         'zip_code': result[15],
-        'seller_name': result[20],
+        'seller_name': result[22],
+        'seller_rating': result[25],
     }
 
     return render(request, 'product_detail.html', {'product': product_dict})
