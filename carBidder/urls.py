@@ -19,12 +19,12 @@ from carBidderApp import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
+    path('', views.testmysql, name='login'),
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('profile/', views.profile, name='profile'),
-    path('add_funds/', views.add_funds, name='add_funds'),
-    path('report/', views.report, name='report'),
-    path('users/', views.users, name='users'),
+    path('search', views.search_car),
+    path('product/<int:listing_id>/', views.product_detail, name='product_detail'),
+    path('product/<int:listing_id>/bid', views.bid, name='bid'),
 ]

@@ -1,20 +1,31 @@
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponseRedirect
-import uuid 
-
+import uuid
+from django.contrib import messages
+from django.http import Http404
+# 12345
 cur_user = {}
 
-def home(request):
+
+def testmysql(request):
+    # with connection.cursor() as cursor:
+    #     cursor.execute("""
+    #         select VIN
+    #         from LISTED_VEHICLES
+    #     """)
+
+    #     rows = cursor.fetchall()
 
     user_type = request.session.get('user_type', '')
     user_name = request.session.get('user_name', '')
+
     context = {
         'user_type': user_type,
         'user_name': user_name,
     }
     return render(request, 'home.html', context)
+
 
 def register(request):
     if request.method == "POST":
@@ -41,54 +52,42 @@ def register(request):
     # Render the registration form for both GET and POST requests
     return render(request, 'register.html')
 
-def update_session(request, email):
-    """
-    Update the session with the user's data based on the provided email.
-    """
-    try:
-        with connection.cursor() as cursor:
-            query = """
-                SELECT * 
-                FROM USERS
-                WHERE email = %s;
-            """
-            cursor.execute(query, [email])
-            user_data = cursor.fetchone()
-
-            if user_data:
-                # Extracting user data and updating the session
-                request.session['user_id'] = user_data[0]
-                request.session['user_type'] = user_data[1]
-                request.session['user_name'] = user_data[2]
-                request.session['email'] = user_data[3]
-                request.session['balance'] = str(user_data[4])  # Convert Decimal to string
-                request.session['seller_rating'] = str(user_data[5])  # Convert Decimal to string
-                request.session['buyer_rating'] = str(user_data[6])  # Convert Decimal to string
-                request.session['num_of_seller_rating'] = user_data[7]
-                request.session['num_of_buyer_rating'] = user_data[8]
-                request.session['is_allow_chat'] = user_data[9]
-                request.session['is_allow_list'] = user_data[10]
-            else:
-                # Handle case where user data is not found
-                # You can redirect to an error page or set an error message
-                pass
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Optionally, handle the exception (e.g., set an error message, redirect)
-
 
 def login(request):
     if request.method == "POST":
         try:
+            # Get data from POST request
             user_email = request.POST.get('email', '')
-            update_session(request, user_email)
-            return redirect('home')
+
+            # Query the database
+            with connection.cursor() as cursor:
+                query = """
+                    SELECT *
+                    FROM USERS
+                    WHERE email = %s;
+                """
+                cursor.execute(query, [user_email]
+                               )  # Pass parameters as a list
+                t = cursor.fetchall()
+                if not t:
+                    return render(request, 'error.html')
+                else:
+                    # return render(request, "home.html", context)
+                    cur_user = t
+                    print(cur_user)
+                    user_data = t[0]
+                    user_type = user_data[1]
+                    user_name = user_data[2]
+                    request.session['user_type'] = user_type
+                    request.session['user_name'] = user_name
+                    return redirect('home')
         except Exception as e:
+            # Handle any errors that occur during the process
             print(f"An error occurred: {e}")
+            # Optionally, add error handling logic here
 
+    # Render the login form for GET requests
     return render(request, 'login.html')
-
 
 
 def logout(request):
@@ -97,154 +96,242 @@ def logout(request):
 
 
 def profile(request):
-    user_email = request.session.get('email', '')
-    if user_email:
-        update_session(request, user_email)
 
-    # Fetching data from the session
-    user_id = request.session.get('user_id', '')
-    user_type = request.session.get('user_type', '')
-    user_name = request.session.get('user_name', '')
-    email = request.session.get('email', '')
-    balance = request.session.get('balance', '')
-    seller_rating = request.session.get('seller_rating', '')
-    buyer_rating = request.session.get('buyer_rating', '')
-    num_of_seller_rating = request.session.get('num_of_seller_rating', '')
-    num_of_buyer_rating = request.session.get('num_of_buyer_rating', '')
-    is_allow_chat = request.session.get('is_allow_chat', '')
-    is_allow_list = request.session.get('is_allow_list', '')
-
-    # Fetch the listings vehicles from the database
-    listings = []
-    if user_id:
-        try:
-            with connection.cursor() as cursor:
-                query = """
-                    SELECT listing_id, make, model, year_of_production, image_url, listing_status
-                    FROM LISTED_VEHICLES
-                    WHERE seller_id = %s;
-                """
-                cursor.execute(query, [user_id])
-                listings = cursor.fetchall()
-                print(listings)
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            # Handle the error
-
-    # Fetch the user's biddings from the database
-    biddings = []
-    
-    if user_id:
-        try:
-            with connection.cursor() as cursor:
-                query = """
-                    SELECT b.bidding_id, b.listing_id, v.make, v.model, v.year_of_production, 
-                           v.image_url, v.listing_status, b.bidding_amount, b.bidding_date, b.is_winner
-                    FROM BIDDINGS b
-                    INNER JOIN LISTED_VEHICLES v ON b.listing_id = v.listing_id
-                    WHERE b.user_id = %s;
-                """
-                cursor.execute(query, [user_id])
-                biddings = cursor.fetchall()
-                print(biddings)
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            # Handle the error
+    return render(request, 'profile.html')
 
 
-    # Creating the context dictionary
-    context = {
-        'user_id': user_id,
-        'user_type': user_type,
-        'user_name': user_name,
-        'email': email,
-        'balance': balance,
-        'seller_rating': seller_rating,
-        'buyer_rating': buyer_rating,
-        'num_of_seller_rating': num_of_seller_rating,
-        'num_of_buyer_rating': num_of_buyer_rating,
-        'is_allow_chat': is_allow_chat,
-        'is_allow_list': is_allow_list,
-        'listings': listings,
-        'biddings': biddings,
-    }
-    
-    return render(request, 'profile.html', context)
-
-
-def report(request):
+def search_car(request):
+    # Fetch unique values for dropdowns from the database
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM VIOLATION_REPORTS")
-        violation_reports = cursor.fetchall()
+        cursor.execute(
+            "SELECT DISTINCT make FROM LISTED_VEHICLES ORDER BY make")
+        makes = [row[0] for row in cursor.fetchall()]
 
-    context = {
-        'violation_reports': violation_reports,
+        cursor.execute(
+            "SELECT DISTINCT year_of_production FROM LISTED_VEHICLES ORDER BY year_of_production")
+        years = [row[0] for row in cursor.fetchall()]
+
+        cursor.execute(
+            "SELECT DISTINCT mileage FROM LISTED_VEHICLES ORDER BY mileage")
+        mileages = [row[0] for row in cursor.fetchall()]
+
+        cursor.execute(
+            "SELECT DISTINCT price FROM LISTED_VEHICLES ORDER BY price")
+        prices = [row[0] for row in cursor.fetchall()]
+
+    error_message = None
+
+    # Fetch filter parameters
+    make = request.GET.get('make')
+    min_year = request.GET.get('min_year')
+    max_year = request.GET.get('max_year')
+    min_mileage = request.GET.get('min_mile')
+    max_mileage = request.GET.get('max_mile')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+
+    # Check for invalid filter ranges
+    if min_year and max_year and int(min_year) > int(max_year):
+        error_message = "Minimum year cannot be greater than maximum year."
+    elif min_mileage and max_mileage and int(min_mileage) > int(max_mileage):
+        error_message = "Minimum mileage cannot be greater than maximum mileage."
+    elif min_price and max_price and int(min_price) > int(max_price):
+        error_message = "Minimum price cannot be greater than maximum price."
+
+    # If there's an error, return early with the error message
+    if error_message:
+        return render(request, 'search_car.html', {'error_message': error_message})
+
+# Initialize the base query
+    query = "SELECT * FROM LISTED_VEHICLES WHERE 1=1"
+
+    # Initialize the parameters list
+    params = []
+
+    # Append conditions to the query based on provided filters
+    if make:
+        query += " AND make = %s"
+        params.append(make)
+
+    if min_year:
+        query += " AND year_of_production >= %s"
+        params.append(min_year)
+
+    if max_year:
+        query += " AND year_of_production <= %s"
+        params.append(max_year)
+
+    if min_mileage:
+        query += " AND mileage >= %s"
+        params.append(min_mileage)
+
+    if max_mileage:
+        query += " AND mileage <= %s"
+        params.append(max_mileage)
+
+    if min_price:
+        query += " AND price >= %s"
+        params.append(min_price)
+
+    if max_price:
+        query += " AND price <= %s"
+        params.append(max_price)
+
+    # Fetch the search term
+    search_words = []
+    search_term = request.GET.get('search_term', '').strip()
+
+    # Check if search term is not empty
+    if search_term:
+        search_words = search_term.split()
+
+    # Initialize search_words as an empty list
+    search_words = []
+
+    # Fetch the search term
+    search_term = request.GET.get('search_term', '').strip()
+
+    # Check if search term is not empty
+    if search_term:
+        search_words = search_term.split()
+
+        # Build the search query only if there are search words
+        search_query = " AND ("
+        search_query_parts = []
+        for word in search_words:
+            search_query_parts.append(
+                "(make LIKE %s OR model LIKE %s OR exterior_color LIKE %s OR "
+                "vehicle_description LIKE %s OR fuel_type LIKE %s OR CAST(year_of_production AS CHAR) LIKE %s)")
+            params.extend(["%" + word + "%"] * 6)
+
+        # Only append if there are parts to the search query
+        if search_query_parts:
+            search_query += " OR ".join(search_query_parts) + ")"
+            query += search_query
+
+    vehicles = []
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        for row in cursor.fetchall():
+            vehicles.append(dict(zip(columns, row)))
+
+    return render(request, 'search_car.html', {
+        'vehicles': vehicles,
+        'makes': makes,
+        'years': years,
+        'mileages': mileages,
+        'prices': prices,
+        'error_message': error_message
+    })
+
+
+def product_detail(request, listing_id):
+    result = None
+    current_bid = None
+
+    with connection.cursor() as cursor:
+        # SQL query to join USERS and LISTED_VEHICLES tables
+        cursor.execute("""
+            SELECT LV.*, U.*
+            FROM LISTED_VEHICLES AS LV
+            JOIN USERS AS U ON LV.seller_id = U.user_id
+            WHERE LV.listing_id = %s
+        """, [listing_id])
+
+        result = cursor.fetchone()
+
+    # If no product is found, raise a 404 error
+    if not result:
+        raise Http404("Product does not exist")
+
+    # Check if the current user has bid on this product
+    current_user_id = request.user.id
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT bidding_amount FROM BIDDINGS
+            WHERE listing_id = %s AND user_id = %s
+            ORDER BY bidding_date DESC
+            LIMIT 1
+        """, [listing_id, current_user_id])
+        current_bid = cursor.fetchone()
+
+    # Map the result to a dictionary for easy access in the template
+    product_dict = {
+        'listing_id': result[0],
+        'VIN': result[2],
+        'image_url': result[4],
+        'vehicle_description': result[5],
+        'make': result[6],
+        'model': result[7],
+        'fuel_type': result[8],
+        'year_of_production': result[9],
+        'mileage': result[10],
+        'price': result[11],
+        'exterior_color': result[12],
+        'interior_color': result[13],
+        'state': result[14],
+        'zip_code': result[15],
+        'seller_name': result[22],
+        'seller_rating': result[25],
+        'current_bid': current_bid[0] if current_bid else None,
     }
 
+    # return render(request, 'product_detail.html', {'product': product_dict})
     if request.method == 'POST':
-        report_id_to_delete = request.POST.get('report_id_to_delete')
-        if report_id_to_delete:
-            # Delete the report with the specified report_id using a cursor
-            with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM VIOLATION_REPORTS WHERE report_id = %s", [report_id_to_delete])
+        bid_amount = request.POST.get('bid_amount')
+        # Assuming user authentication
+        user_id = request.user.id
 
-            # Redirect back to the report page after deleting
-            return redirect('report')
+        # Convert bid amount to a decimal or float as needed
+        bid_amount = float(bid_amount)
 
-    return render(request, 'report.html', context)
+        # Insert the bid into the database
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO BIDDINGS (listing_id, user_id, bidding_amount, bidding_date)
+                VALUES (%s, %s, %s, NOW())
+            """, [listing_id, user_id, bid_amount])
+            # If the bid is successfully placed, add a success message
+            messages.success(request, 'Bid placed successfully!')
+            # Redirect to the same page to display the success message
+            return redirect('product_detail', listing_id=listing_id)
+        # If the bid is not successful, you might want to add an error message and
+        # handle it accordingly
+
+    # For GET requests or if the bid placement is not successful, render the page with product details
+    return render(request, 'product_detail.html', {'product': product_dict})
 
 
-def users(request):
-    user_email = request.session.get('email', '')
-    if user_email:
-        update_session(request, user_email)
-
+def bid(request, listing_id):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM USERS")
-        users = cursor.fetchall()
-    
-    # Add violation reports to the context
-    user_type = request.session.get('user_type', '')
-    user_name = request.session.get('user_name', '')
-    context = {
-        'users': users,
-        'user_type': user_type,
-        'user_name': user_name,
+        # SQL query to join USERS and LISTED_VEHICLES tables
+        cursor.execute("""
+            SELECT LV.*, U.*
+            FROM LISTED_VEHICLES AS LV
+            JOIN USERS AS U ON LV.seller_id = U.user_id
+            WHERE LV.listing_id = %s
+        """, [listing_id])
 
+        result = cursor.fetchone()
+
+    # Map the result to a dictionary for easy access in the template
+    product_dict = {
+        'image_url': result[4],
+        'make': result[6],
+        'model': result[7],
+        'price': result[11],
     }
-    print("cur_user")
-    print(cur_user)
-    return render(request, 'users.html', context)
+    if request.method == 'POST':
+        # Process the bid amount
+        bid_amount = float(request.POST['bid_amount'])
 
-def add_funds(request):
-    if request.method == "POST":
-        user_id = request.session.get('user_id')
-        amount = request.POST.get('amount')
+        # Check if the bid amount is valid
+        if bid_amount >= product_dict['price']:
+            # Process the bid
+            # ...
 
-        # Only proceed if the user is logged in as a normal user
-        if not user_id or request.session.get('user_type') != 'NORMAL_USER':
-            return HttpResponseRedirect('/')  # Redirect to home or show an error
+            # Redirect back to the product page
+            return redirect('product_detail', listing_id=listing_id)
 
-        try:
-            # Update the user's balance in the database
-            with connection.cursor() as cursor:
-                query = """
-                    UPDATE USERS
-                    SET balance = balance + %s
-                    WHERE user_id = %s;
-                """
-                cursor.execute(query, (amount, user_id))
-                connection.commit()
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            # Handle the error (e.g., set an error message)
-
-        # Optionally, update the session balance
-        request.session['balance'] = str(float(request.session.get('balance', 0)) + float(amount))
-
-        # Redirect to the profile page or show a success message
-        return HttpResponseRedirect('/profile/')
-    else:
-        # Redirect or show an error if accessed directly
-        return HttpResponseRedirect('/')
-    
+    return render(request, 'bid.html', {'product': product_dict})
